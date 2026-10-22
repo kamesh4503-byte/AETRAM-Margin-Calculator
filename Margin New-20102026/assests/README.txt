@@ -1,0 +1,1 @@
+Copy your existing logo.png into this folder. The HTML expects: assests/logo.png

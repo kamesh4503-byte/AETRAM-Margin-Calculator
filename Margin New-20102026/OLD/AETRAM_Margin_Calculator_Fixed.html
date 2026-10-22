@@ -1,0 +1,3385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AETRAM Margin Calculator</title>
+
+<link rel="stylesheet" href="css/logo.css">
+
+<style>
+:root{
+  --bg:#eef0f2;
+  --card:#ffffff;
+  --border:#e4e6ea;
+  --text:#1c2430;
+  --muted:#7c8592;
+  --label:#1c2430;
+  --buy:#0bd61cd5;
+  --sell:#d31111;
+  --gold-1:#f2c14e;
+  --gold-2:#d99a2b;
+  --pos:#0a9e17;
+  --neg:#d31111;
+  --radius:14px;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+}
+
+body{
+  background:var(--bg);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  color:var(--text);
+}
+
+/* HEADER */
+
+.site-header{
+  display:flex;
+  align-items:center;
+  background:#000;
+  padding:14px 28px;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.page-body{
+  padding:28px 20px 60px;
+}
+
+.wrap{
+  max-width:1600px;
+  margin:0 auto;
+}
+
+/* TOP NAV */
+
+.topnav{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  background:#1c1f24;
+  border-radius:999px;
+  padding:6px;
+  max-width:460px;
+  margin:0 auto 30px;
+}
+
+.topnav button{
+  border:none;
+  background:transparent;
+  color:#d8dade;
+  font-size:14px;
+  font-weight:600;
+  padding:10px 28px;
+  border-radius:999px;
+  cursor:pointer;
+  transition:all .15s ease;
+}
+
+.topnav button.active{
+  background:linear-gradient(180deg,var(--gold-1),var(--gold-2));
+  color:#1c1400;
+}
+
+.topnav button:not(.active):hover{
+  color:#fff;
+}
+
+/* GRID */
+
+.grid{
+  display:grid;
+  grid-template-columns:1.05fr 1fr;
+  gap:18px;
+  align-items:start;
+}
+
+@media(max-width:900px){
+  .grid{
+    grid-template-columns:1fr;
+  }
+}
+
+/* CARD */
+
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px;
+  box-shadow:0 1px 3px rgba(20,20,30,0.04);
+}
+
+.card h3{
+  margin:0 0 14px;
+  font-size:17px;
+  font-weight:700;
+}
+
+/* RADIO */
+
+.radio-row{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  margin-bottom:14px;
+  flex-wrap:wrap;
+}
+
+.radio-opt{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  font-size:13px;
+  color:var(--text);
+  cursor:pointer;
+  user-select:none;
+}
+
+.radio-opt input{
+  accent-color:var(--gold-2);
+  width:14px;
+  height:14px;
+  cursor:pointer;
+}
+
+.buy-label{
+  color:var(--buy);
+  font-weight:700;
+}
+
+.sell-label{
+  color:var(--sell);
+  font-weight:700;
+}
+
+/* FIELDS */
+
+.symbol-row{
+  margin-bottom:12px;
+}
+
+.symbol-row label,
+.field-row label{
+  display:block;
+  font-size:10.5px;
+  letter-spacing:.04em;
+  font-weight:700;
+  color:var(--muted);
+  margin-bottom:5px;
+  text-transform:uppercase;
+}
+
+.symbol-row select,
+.field-row select{
+  width:100%;
+  border:1.5px solid var(--border);
+  border-radius:8px;
+  padding:9px 8px;
+  font-size:14px;
+  font-weight:600;
+  color:var(--text);
+  background:#fff;
+  outline:none;
+}
+
+.symbol-row select:focus,
+.field-row select:focus{
+  box-shadow:0 0 0 3px rgba(217,154,43,0.15);
+}
+
+hr.sep{
+  border:none;
+  border-top:1px solid var(--border);
+  margin:14px 0 16px;
+}
+
+.field-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.field-row.field-row-3{
+  grid-template-columns:1fr 1fr 1fr;
+}
+
+.field-row input[type=number],
+.field-row input[type=text]{
+  width:100%;
+  border:1.5px solid var(--border);
+  border-radius:8px;
+  padding:9px 8px;
+  font-size:14px;
+  font-weight:600;
+  color:var(--text);
+  outline:none;
+}
+
+.field-row input:focus{
+  box-shadow:0 0 0 3px rgba(217,154,43,0.15);
+}
+
+.field-row input:disabled{
+  background:#f4f5f7;
+  color:#8f96a0;
+}
+
+/* LOT STEPPER */
+
+.lot-stepper{
+  display:flex;
+  align-items:stretch;
+  border:1.5px solid var(--border);
+  border-radius:8px;
+  overflow:hidden;
+}
+
+.lot-stepper button{
+  border:none;
+  background:#f4f5f7;
+  color:var(--text);
+  font-size:15px;
+  font-weight:700;
+  width:34px;
+  cursor:pointer;
+}
+
+.lot-stepper button:hover{
+  background:#eceef1;
+}
+
+.lot-stepper input{
+  border:none !important;
+  text-align:center;
+  flex:1;
+  padding:9px 4px;
+  font-size:14px;
+  font-weight:700;
+}
+
+.lot-stepper input:focus{
+  box-shadow:none !important;
+}
+
+.hint{
+  font-size:11px;
+  color:var(--muted);
+  margin:-6px 0 12px;
+}
+
+/* BUTTONS */
+
+.btn-primary{
+  width:100%;
+  border:none;
+  background:linear-gradient(180deg,var(--gold-1),var(--gold-2));
+  color:#1c1400;
+  font-weight:800;
+  font-size:14px;
+  padding:12px 16px;
+  border-radius:10px;
+  cursor:pointer;
+  letter-spacing:.02em;
+}
+
+.btn-primary:hover{
+  filter:brightness(1.03);
+}
+
+.btn-primary:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+.btn-secondary{
+  border:1.5px solid var(--border);
+  background:#fff;
+  color:var(--text);
+  font-weight:700;
+  font-size:13px;
+  padding:11px 16px;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+.btn-secondary:hover{
+  background:#f4f5f7;
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+  margin-top:4px;
+}
+
+.actions .btn-primary{
+  flex:1;
+}
+
+/* ============================================================
+   PORTFOLIO TABLE
+============================================================ */
+
+.portfolio-wrapper{
+  width:100%;
+  overflow-x:auto;
+}
+
+.portfolio-table{
+  width:100%;
+  min-width:1150px;
+  border-collapse:collapse;
+  font-size:13px;
+  margin-bottom:14px;
+}
+
+.portfolio-table th{
+  text-align:left;
+  font-size:10.5px;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:var(--muted);
+  font-weight:700;
+  padding:0 8px 9px;
+  border-bottom:1px solid var(--border);
+  white-space:nowrap;
+}
+
+.portfolio-table td{
+  padding:9px 8px;
+  border-bottom:1px solid var(--border);
+  vertical-align:middle;
+  white-space:nowrap;
+}
+
+.portfolio-table tr.empty-row td{
+  color:var(--muted);
+  text-align:center;
+  padding:22px 8px;
+  font-style:italic;
+}
+
+.symbol-cell{
+  font-weight:700;
+}
+
+.expiry-cell{
+  color:#444;
+}
+
+.strike-cell{
+  font-variant-numeric:tabular-nums;
+}
+
+.opt-cell{
+  font-weight:700;
+}
+
+.product-cell{
+  font-weight:700;
+}
+
+.qty-cell,
+.price-cell,
+.number-cell{
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+
+.side-tag{
+  font-size:11px;
+  font-weight:800;
+  padding:2px 8px;
+  border-radius:999px;
+}
+
+.side-tag.B{
+  background:rgba(11,214,28,0.12);
+  color:#0a9e17;
+}
+
+.side-tag.S{
+  background:rgba(211,17,17,0.1);
+  color:var(--sell);
+}
+
+.rm{
+  border:none;
+  background:transparent;
+  color:var(--muted);
+  cursor:pointer;
+  font-size:14px;
+}
+
+.rm:hover{
+  color:var(--sell);
+}
+
+/* STATUS */
+
+.status-line{
+  font-size:12px;
+  min-height:16px;
+  margin:-4px 0 12px;
+}
+
+.status-line.ok{
+  color:#0a9e17;
+}
+
+.status-line.err{
+  color:var(--sell);
+}
+
+/* SUMMARY */
+
+.breakdown{
+  margin-top:6px;
+}
+
+.b-row{
+  display:flex;
+  justify-content:space-between;
+  padding:8px 0;
+  font-size:13.5px;
+  border-bottom:1px dashed var(--border);
+}
+
+.b-row .k{
+  color:var(--label);
+}
+
+.b-row .v{
+  font-weight:700;
+}
+
+.b-row.benefit .v{
+  color:var(--pos);
+}
+
+.b-row.total{
+  border-top:1.5px solid var(--border);
+  border-bottom:none;
+  margin-top:2px;
+  padding-top:14px;
+  font-size:15px;
+}
+
+.b-row.total .k,
+.b-row.total .v{
+  color:var(--text);
+  font-weight:800;
+}
+
+/* HEDGE BOX */
+
+.hedge-box{
+  margin-top:18px;
+  padding:16px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:#fafafa;
+}
+
+.hedge-title{
+  font-size:14px;
+  font-weight:800;
+  margin-bottom:10px;
+}
+
+.hedge-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:10px;
+}
+
+.hedge-item{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:9px;
+  padding:10px;
+}
+
+.hedge-item .hk{
+  display:block;
+  font-size:10px;
+  color:var(--muted);
+  text-transform:uppercase;
+  font-weight:700;
+  margin-bottom:5px;
+}
+
+.hedge-item .hv{
+  display:block;
+  font-size:14px;
+  font-weight:800;
+}
+
+.hedge-item.benefit .hv{
+  color:#0a9e17;
+}
+
+@media(max-width:800px){
+
+  .hedge-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+}
+
+/* NOTE */
+
+.note{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:16px;
+  line-height:1.5;
+  padding-top:14px;
+  border-top:1px solid var(--border);
+}
+
+.note code{
+  background:#f4f5f7;
+  padding:1px 5px;
+  border-radius:4px;
+}
+</style>
+</head>
+
+<body>
+
+<header class="site-header">
+  <div class="logo">
+    <img src="./assests/logo.png" alt="AETRAM Logo">
+  </div>
+</header>
+
+<div class="page-body">
+
+<div class="wrap">
+
+<!-- NAV -->
+
+<div class="topnav" id="pageNav">
+  <button data-page="fo" class="active">F&amp;O</button>
+  <button data-page="commodity">Commodity</button>
+  <button data-page="currency">Currency</button>
+</div>
+
+
+<!-- F&O -->
+
+<div class="tabpage" id="page-fo">
+
+  <div class="grid">
+
+    <div class="card" id="builder_STK"></div>
+
+    <div class="card" id="builder_IDX"></div>
+
+  </div>
+
+</div>
+
+
+<!-- COMMODITY -->
+
+<div class="tabpage" id="page-commodity" style="display:none;">
+
+  <div class="grid"
+       style="grid-template-columns:1fr;max-width:520px;margin:0 auto;">
+
+    <div class="card" id="builder_COM"></div>
+
+  </div>
+
+</div>
+
+
+<!-- CURRENCY -->
+
+<div class="tabpage" id="page-currency" style="display:none;">
+
+  <div class="card"
+       style="max-width:520px;margin:0 auto;text-align:center;">
+
+    <h3>Currency</h3>
+
+    <p class="hint"
+       style="margin:6px 0 0;font-size:12.5px;">
+
+      Currency margin isn't wired up yet — no currency contract
+      or bhavcopy file has been provided.
+
+    </p>
+
+  </div>
+
+</div>
+
+
+<p class="hint"
+   style="text-align:center;margin:18px 0 0;"
+   id="dataStamp">
+
+   contract master loading…
+
+</p>
+
+
+<!-- ==========================================================
+     PORTFOLIO
+=========================================================== -->
+
+<div class="card" style="margin-top:22px;">
+
+  <h3>Portfolio &amp; margin</h3>
+
+  <div class="portfolio-wrapper">
+
+    <table class="portfolio-table">
+
+      <thead>
+
+        <tr>
+
+          <th>Symbol</th>
+          <th>Expiry</th>
+          <th>Strike</th>
+          <th>Opt Type</th>
+          <th>Product</th>
+          <th>Qty</th>
+          <th>Price</th>
+          <th>Type</th>
+          <th>Span Margin</th>
+          <th>Exposure Margin</th>
+          <th>Premium</th>
+          <th>Total</th>
+          <th></th>
+
+        </tr>
+
+      </thead>
+
+      <tbody id="portfolioBody">
+
+        <tr class="empty-row">
+
+          <td colspan="13">
+
+            No legs added yet — build a position above.
+
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+
+  <div class="actions">
+
+    <button class="btn-primary"
+            id="calcBtn"
+            disabled>
+
+      Calculate margin
+
+    </button>
+
+    <button class="btn-secondary"
+            id="resetBtn">
+
+      Reset
+
+    </button>
+
+  </div>
+
+
+  <div class="status-line"
+       id="statusLine">
+  </div>
+
+
+  <!-- MAIN SUMMARY -->
+
+  <div class="breakdown">
+
+    <div class="b-row benefit">
+
+      <span class="k">
+        Margin benefit
+      </span>
+
+      <span class="v"
+            id="statBenefit">
+
+        ₹0
+
+      </span>
+
+    </div>
+
+
+    <div class="b-row">
+
+      <span class="k">
+        Span margin
+      </span>
+
+      <span class="v"
+            id="statSpan">
+
+        ₹0
+
+      </span>
+
+    </div>
+
+
+    <div class="b-row">
+
+      <span class="k">
+        Exposure margin
+      </span>
+
+      <span class="v"
+            id="statExposure">
+
+        ₹0
+
+      </span>
+
+    </div>
+
+
+    <div class="b-row">
+
+      <span class="k">
+        Net options premium
+      </span>
+
+      <span class="v"
+            id="statPremium">
+
+        ₹0
+
+      </span>
+
+    </div>
+
+
+    <div class="b-row total">
+
+      <span class="k">
+        Total margin required
+      </span>
+
+      <span class="v"
+            id="statTotal">
+
+        ₹0
+
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <!-- HEDGE MARGIN BOX -->
+
+  <div class="hedge-box">
+
+    <div class="hedge-title">
+      Margin with Hedge Benefit
+    </div>
+
+    <div class="hedge-grid">
+
+      <div class="hedge-item benefit">
+
+        <span class="hk">
+          Margin Benefit
+        </span>
+
+        <span class="hv"
+              id="hedgeBenefit">
+
+          ₹0
+
+        </span>
+
+      </div>
+
+
+      <div class="hedge-item">
+
+        <span class="hk">
+          Span Margin
+        </span>
+
+        <span class="hv"
+              id="hedgeSpan">
+
+          ₹0
+
+        </span>
+
+      </div>
+
+
+      <div class="hedge-item">
+
+        <span class="hk">
+          Exposure Margin
+        </span>
+
+        <span class="hv"
+              id="hedgeExposure">
+
+          ₹0
+
+        </span>
+
+      </div>
+
+
+      <div class="hedge-item">
+
+        <span class="hk">
+          Premium
+        </span>
+
+        <span class="hv"
+              id="hedgePremium">
+
+          ₹0
+
+        </span>
+
+      </div>
+
+
+      <div class="hedge-item">
+
+        <span class="hk">
+          Total Margin Required
+        </span>
+
+        <span class="hv"
+              id="hedgeTotal">
+
+          ₹0
+
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="note">
+
+   <!-- <b>Endpoint:</b>
+
+    <code>
+      POST https://secure.aetramtrades.in/apimarketdata/instruments/calculator/position
+    </code>-->
+
+    <br><br>
+
+    Individual margin is calculated by sending each portfolio leg
+    separately to the margin engine.
+
+    <br><br>
+
+    <b>Margin Benefit:</b>
+
+    <code>
+      Sum of individual margins − Combined portfolio margin
+    </code>
+
+  </div>
+
+</div>
+
+</div>
+</div>
+
+
+<script>
+
+/* ============================================================
+   STATE
+============================================================ */
+
+let INSTR_DATA = {};
+let legs = [];
+
+const $ = id => document.getElementById(id);
+
+/* Safe DOM helpers
+   If an optional result element (for example the Hedge Benefit box)
+   is removed from the HTML, calculations must continue without a
+   "Cannot set properties of null" error. */
+function setText(id, value){
+  const el = $(id);
+  if(el) el.textContent = value;
+}
+
+function setDisabled(id, value){
+  const el = $(id);
+  if(el) el.disabled = value;
+}
+
+function setValue(id, value){
+  const el = $(id);
+  if(el) el.value = value;
+}
+
+
+
+/* ============================================================
+   MCX LOT SIZES
+============================================================ */
+
+const MCX_LOT_SIZES = {
+
+  GOLD:100,
+  GOLDM:10,
+  GOLDPETAL:1,
+  GOLDGUINEA:1,
+  GOLDTEN:10,
+
+  SILVER:30,
+  SILVERM:5,
+  SILVERMIC:1,
+
+  CRUDEOIL:100,
+  CRUDEOILM:10,
+
+  NATURALGAS:1250,
+  NATGASMINI:250,
+
+  ALUMINI:1000,
+  ALUMINIUM:5000,
+
+  LEADMINI:1000,
+  LEAD:5000,
+
+  ZINCMINI:1000,
+  ZINC:5000,
+
+  COPPER:2500
+
+};
+
+
+/* ============================================================
+   NSE CONTRACT
+============================================================ */
+
+async function loadNseContractFile(data){
+
+  let text;
+
+  try{
+
+    const res = await fetch(
+      'contract.txt',
+      {cache:'no-store'}
+    );
+
+    if(!res.ok)
+      throw new Error('HTTP ' + res.status);
+
+    text = await res.text();
+
+  }catch(err){
+
+    return {
+      ok:false,
+      err
+    };
+
+  }
+
+
+  const lines = text.split('\n');
+
+  for(let i=1;i<lines.length;i++){
+
+    const line = lines[i];
+
+    if(!line) continue;
+
+    const p = line.split('|');
+
+    if(p.length < 69) continue;
+
+
+    const itype = p[2];
+
+    if(
+      itype !== 'FUTIDX' &&
+      itype !== 'OPTIDX' &&
+      itype !== 'FUTSTK' &&
+      itype !== 'OPTSTK'
+    ){
+
+      continue;
+
+    }
+
+
+    const tid = parseInt(p[0],10);
+    const name = p[3];
+    const expiry = p[6];
+
+    const strikeRaw =
+      parseInt(p[7],10);
+
+    const opttype = p[8];
+
+    const lot =
+      parseInt(p[30],10) || 0;
+
+    const priceRaw =
+      parseInt(p[67],10) || 0;
+
+
+    if(!tid || !name || !expiry)
+      continue;
+
+
+    const price =
+      Math.round((priceRaw / 100) * 100) / 100;
+
+
+    const kindCat =
+      (
+        itype === 'FUTIDX' ||
+        itype === 'OPTIDX'
+      )
+      ? 'IDX'
+      : 'STK';
+
+
+    let d = data[name];
+
+
+    if(!d){
+
+      d = data[name] = {
+
+        lot:0,
+        kind:kindCat,
+        exchange:'NSEFO',
+        fut:{},
+        opt:{}
+
+      };
+
+    }
+
+
+    if(lot && !d.lot)
+      d.lot = lot;
+
+
+    if(
+      itype === 'FUTIDX' ||
+      itype === 'FUTSTK'
+    ){
+
+      d.fut[expiry] = {
+
+        id:tid,
+        price:price,
+        product:itype
+
+      };
+
+    }else{
+
+      const strike =
+        Math.round(
+          (strikeRaw / 100) * 100
+        ) / 100;
+
+
+      const skey =
+        String(strike);
+
+
+      let expMap =
+        d.opt[expiry];
+
+
+      if(!expMap)
+        expMap =
+          d.opt[expiry] = {};
+
+
+      let legMap =
+        expMap[skey];
+
+
+      if(!legMap)
+        legMap =
+          expMap[skey] = {};
+
+
+      if(opttype === 'CE'){
+
+        legMap.ce = {
+
+          id:tid,
+          price:price,
+          product:itype
+
+        };
+
+      }else if(opttype === 'PE'){
+
+        legMap.pe = {
+
+          id:tid,
+          price:price,
+          product:itype
+
+        };
+
+      }
+
+    }
+
+  }
+
+
+  return {
+    ok:true
+  };
+
+}
+
+
+/* ============================================================
+   MCX CSV
+============================================================ */
+
+function parseCsvLine(line){
+
+  return line.split(',');
+
+}
+
+
+async function loadMcxBhavcopy(data){
+
+  let text;
+
+  try{
+
+    const res =
+      await fetch(
+        'mcx_bhavcopy.csv',
+        {cache:'no-store'}
+      );
+
+    if(!res.ok)
+      throw new Error(
+        'HTTP ' + res.status
+      );
+
+    text =
+      await res.text();
+
+  }catch(err){
+
+    return {
+      ok:false,
+      err
+    };
+
+  }
+
+
+  const lines =
+    text.split('\n');
+
+
+  if(lines.length < 2){
+
+    return {
+      ok:false,
+      err:new Error('empty file')
+    };
+
+  }
+
+
+  const header =
+    parseCsvLine(
+      lines[0].trim()
+    );
+
+
+  const col =
+    name => header.indexOf(name);
+
+
+  const iId =
+    col('FinInstrmId');
+
+  const iSym =
+    col('TckrSymb');
+
+  const iExp =
+    col('FininstrmActlXpryDt');
+
+  const iStrike =
+    col('StrkPric');
+
+  const iOptTp =
+    col('OptnTp');
+
+  const iCls =
+    col('ClsPric');
+
+
+  if(
+    iId < 0 ||
+    iSym < 0 ||
+    iExp < 0
+  ){
+
+    return {
+      ok:false,
+      err:new Error(
+        'unexpected bhavcopy columns'
+      )
+    };
+
+  }
+
+
+  for(let i=1;i<lines.length;i++){
+
+    const line =
+      lines[i];
+
+    if(!line || !line.trim())
+      continue;
+
+
+    const p =
+      parseCsvLine(line);
+
+
+    if(p.length <= iCls)
+      continue;
+
+
+    const tid =
+      parseInt(
+        p[iId],
+        10
+      );
+
+
+    const name =
+      p[iSym];
+
+
+    const expiry =
+      p[iExp];
+
+
+    const optType =
+      (p[iOptTp] || '').trim();
+
+
+    const price =
+      parseFloat(p[iCls]) || 0;
+
+
+    if(
+      !tid ||
+      !name ||
+      !expiry
+    )
+      continue;
+
+
+    if(!(name in MCX_LOT_SIZES))
+      continue;
+
+
+    let d =
+      data[name];
+
+
+    if(!d){
+
+      d =
+        data[name] = {
+
+          lot:
+            MCX_LOT_SIZES[name],
+
+          kind:'COM',
+
+          exchange:'MCXFO',
+
+          fut:{},
+
+          opt:{}
+
+        };
+
+    }
+
+
+    if(!optType){
+
+      d.fut[expiry] = {
+
+        id:tid,
+        price:price,
+        product:'FUTCOM'
+
+      };
+
+    }else{
+
+      const strike =
+        parseFloat(
+          p[iStrike]
+        ) || 0;
+
+
+      const skey =
+        String(strike);
+
+
+      let expMap =
+        d.opt[expiry];
+
+
+      if(!expMap)
+        expMap =
+          d.opt[expiry] = {};
+
+
+      let legMap =
+        expMap[skey];
+
+
+      if(!legMap)
+        legMap =
+          expMap[skey] = {};
+
+
+      if(optType === 'CE'){
+
+        legMap.ce = {
+
+          id:tid,
+          price:price,
+          product:'OPTCOM'
+
+        };
+
+      }else if(optType === 'PE'){
+
+        legMap.pe = {
+
+          id:tid,
+          price:price,
+          product:'OPTCOM'
+
+        };
+
+      }
+
+    }
+
+  }
+
+
+  return {
+    ok:true
+  };
+
+}
+
+
+/* ============================================================
+   LOAD ALL DATA
+============================================================ */
+
+async function loadAllData(){
+
+  setText('dataStamp',
+    'loading contract.txt and mcx_bhavcopy.csv…');
+
+
+  const data = {};
+
+
+  const [
+    nse,
+    mcx
+  ] =
+    await Promise.all([
+
+      loadNseContractFile(data),
+
+      loadMcxBhavcopy(data)
+
+    ]);
+
+
+  const problems = [];
+
+
+  if(!nse.ok){
+
+    problems.push(
+      'contract.txt not found/loaded'
+    );
+
+  }
+
+
+  if(!mcx.ok){
+
+    problems.push(
+      'mcx_bhavcopy.csv not found/loaded'
+    );
+
+  }
+
+
+  INSTR_DATA = data;
+
+
+  return problems;
+
+}
+
+
+/* ============================================================
+   EXPIRY
+============================================================ */
+
+function expiryToDate(exp){
+
+  if(
+    typeof exp === 'string' &&
+    exp.indexOf('-') !== -1
+  ){
+
+    return new Date(
+      exp + 'T00:00:00'
+    );
+
+  }
+
+
+  return new Date(
+    Number(exp) * 1000
+  );
+
+}
+
+
+function fmtExpiry(exp){
+
+  return expiryToDate(exp)
+    .toLocaleDateString(
+      'en-GB',
+      {
+        day:'2-digit',
+        month:'short',
+        year:'numeric'
+      }
+    );
+
+}
+
+
+/* ============================================================
+   NAVIGATION
+============================================================ */
+
+$('pageNav').addEventListener(
+  'click',
+  e => {
+
+    const btn =
+      e.target.closest('button');
+
+    if(!btn)
+      return;
+
+
+    [
+      ...e.currentTarget.children
+    ].forEach(
+      b => b.classList.remove('active')
+    );
+
+
+    btn.classList.add('active');
+
+
+    const page =
+      btn.dataset.page;
+
+
+    [
+      'fo',
+      'commodity',
+      'currency'
+    ].forEach(p => {
+
+      $('page-' + p).style.display =
+        p === page
+        ? 'block'
+        : 'none';
+
+    });
+
+  }
+);
+
+
+/* ============================================================
+   BUILD PANEL
+============================================================ */
+
+function buildPanel(
+  containerId,
+  kindValue,
+  title
+){
+
+  const ns =
+    kindValue;
+
+
+  const root =
+    $(containerId);
+
+
+  root.innerHTML = `
+
+    <h3>${title}</h3>
+
+    <div class="radio-row">
+
+      <label class="radio-opt">
+
+        <input
+          type="radio"
+          name="inst_${ns}"
+          value="FUT"
+          checked
+        >
+
+        Futures
+
+      </label>
+
+
+      <label class="radio-opt">
+
+        <input
+          type="radio"
+          name="inst_${ns}"
+          value="OPT"
+        >
+
+        Options
+
+      </label>
+
+
+      <span style="flex:1"></span>
+
+
+      <label class="radio-opt">
+
+        <input
+          type="radio"
+          name="side_${ns}"
+          value="B"
+          checked
+        >
+
+        <span class="buy-label">
+          Buy
+        </span>
+
+      </label>
+
+
+      <label class="radio-opt">
+
+        <input
+          type="radio"
+          name="side_${ns}"
+          value="S"
+        >
+
+        <span class="sell-label">
+          Sell
+        </span>
+
+      </label>
+
+    </div>
+
+
+    <hr class="sep">
+
+
+    <div class="symbol-row">
+
+      <label>
+        Symbol
+      </label>
+
+      <select id="symbolSel_${ns}"></select>
+
+    </div>
+
+
+    <div class="field-row field-row-3">
+
+      <div
+        class="symbol-row"
+        style="margin-bottom:0;"
+      >
+
+        <label>
+          Expiry
+        </label>
+
+        <select
+          id="expirySel_${ns}">
+        </select>
+
+      </div>
+
+
+      <div
+        class="symbol-row"
+        id="optionRow_${ns}"
+        style="margin-bottom:0;display:none;"
+      >
+
+        <label>
+          Strike
+        </label>
+
+        <select
+          id="strikeSel_${ns}">
+        </select>
+
+      </div>
+
+
+      <div
+        class="symbol-row"
+        id="optTypeRow_${ns}"
+        style="margin-bottom:0;display:none;"
+      >
+
+        <label>
+          Type
+        </label>
+
+        <div
+          class="radio-row"
+          style="margin-bottom:0;padding-top:9px;"
+        >
+
+          <label class="radio-opt">
+
+            <input
+              type="radio"
+              name="ot_${ns}"
+              value="CE"
+              checked
+            >
+
+            CE
+
+          </label>
+
+
+          <label class="radio-opt">
+
+            <input
+              type="radio"
+              name="ot_${ns}"
+              value="PE"
+            >
+
+            PE
+
+          </label>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="field-row">
+
+      <div>
+
+        <label>
+          Lots
+          <span
+            id="lotHintLabel_${ns}"
+            style="text-transform:none;font-weight:600;"
+          ></span>
+        </label>
+
+
+        <div class="lot-stepper">
+
+          <button
+            type="button"
+            id="lotMinus_${ns}"
+          >
+            −
+          </button>
+
+
+          <input
+            type="number"
+            id="lotsInput_${ns}"
+            value="1"
+            min="1"
+          >
+
+
+          <button
+            type="button"
+            id="lotPlus_${ns}"
+          >
+            +
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div>
+
+        <label>
+          Price (₹ per unit)
+          <span
+            style="text-transform:none;font-weight:600;"
+          >
+            — auto
+          </span>
+        </label>
+
+
+        <input
+          type="number"
+          id="priceInput_${ns}"
+          step="0.05"
+          placeholder="e.g. 130.00"
+        >
+
+      </div>
+
+    </div>
+
+
+    <div
+      class="hint"
+      id="qtyHint_${ns}"
+    >
+      quantity: 1 × — units
+    </div>
+
+
+    <button
+      class="btn-primary"
+      id="addBtn_${ns}"
+    >
+      Add to portfolio
+    </button>
+
+  `;
+
+
+  const state = {
+
+    inst:'FUT',
+    optType:'CE',
+    side:'B'
+
+  };
+
+
+  const g =
+    id => $(id + '_' + ns);
+
+
+  function symbolsForKind(){
+
+    return Object.keys(INSTR_DATA)
+      .filter(
+        s =>
+          INSTR_DATA[s].kind === kindValue
+      )
+      .sort();
+
+  }
+
+
+  function currentSymbolData(){
+
+    return INSTR_DATA[
+      g('symbolSel').value
+    ];
+
+  }
+
+
+  function refreshSymbolSel(){
+
+    const syms =
+      symbolsForKind();
+
+
+    g('symbolSel').innerHTML =
+      syms.map(
+        s =>
+          `<option value="${s}">
+             ${s}
+           </option>`
+      ).join('');
+
+
+    refreshExpirySel();
+
+  }
+
+
+  function refreshExpirySel(){
+
+    const d =
+      currentSymbolData();
+
+
+    const sel =
+      g('expirySel');
+
+
+    if(!d){
+
+      sel.innerHTML = '';
+
+      refreshStrikeSel();
+
+      return;
+
+    }
+
+
+    const expMap =
+      state.inst === 'FUT'
+      ? d.fut
+      : d.opt;
+
+
+    const exps =
+      Object.keys(expMap)
+        .sort(
+          (a,b) =>
+            expiryToDate(a) -
+            expiryToDate(b)
+        );
+
+
+    sel.innerHTML =
+      exps.map(
+        e =>
+          `<option value="${e}">
+             ${fmtExpiry(e)}
+           </option>`
+      ).join('');
+
+
+    refreshStrikeSel();
+
+    refreshLotHint();
+
+    refreshPrice();
+
+  }
+
+
+  function refreshStrikeSel(){
+
+    const optionRow =
+      g('optionRow');
+
+    const optTypeRow =
+      g('optTypeRow');
+
+
+    if(state.inst !== 'OPT'){
+
+      optionRow.style.display =
+        'none';
+
+      optTypeRow.style.display =
+        'none';
+
+      return;
+
+    }
+
+
+    optionRow.style.display =
+      'block';
+
+    optTypeRow.style.display =
+      'block';
+
+
+    const d =
+      currentSymbolData();
+
+
+    const sel =
+      g('strikeSel');
+
+
+    if(!d){
+
+      sel.innerHTML =
+        '';
+
+      return;
+
+    }
+
+
+    const exp =
+      g('expirySel').value;
+
+
+    const strikeMap =
+      d.opt[exp] || {};
+
+
+    const strikes =
+      Object.keys(strikeMap)
+        .map(Number)
+        .sort(
+          (a,b) => a-b
+        );
+
+
+    sel.innerHTML =
+      strikes.map(
+        s =>
+          `<option value="${s}">
+             ${String(s)}
+           </option>`
+      ).join('');
+
+  }
+
+
+  function refreshLotHint(){
+
+    const d =
+      currentSymbolData();
+
+
+    if(!d)
+      return;
+
+
+    g('lotHintLabel').textContent =
+      `(lot size ${d.lot})`;
+
+
+    updateQtyHint();
+
+  }
+
+
+  function updateQtyHint(){
+
+    const d =
+      currentSymbolData();
+
+
+    if(!d)
+      return;
+
+
+    const lots =
+      parseInt(
+        g('lotsInput').value || '1',
+        10
+      );
+
+
+    g('qtyHint').textContent =
+      `quantity: ${lots} × ${d.lot} = ${lots * d.lot} units`;
+
+  }
+
+
+  function currentLeg(){
+
+    const d =
+      currentSymbolData();
+
+
+    if(!d)
+      return null;
+
+
+    const exp =
+      g('expirySel').value;
+
+
+    if(state.inst === 'FUT'){
+
+      return d.fut[exp] || null;
+
+    }
+
+
+    const strikeMap =
+      d.opt[exp] || {};
+
+
+    const pair =
+      strikeMap[
+        g('strikeSel').value
+      ];
+
+
+    if(!pair)
+      return null;
+
+
+    return state.optType === 'CE'
+      ? pair.ce || null
+      : pair.pe || null;
+
+  }
+
+
+  function refreshPrice(){
+
+    const leg =
+      currentLeg();
+
+
+    if(
+      leg &&
+      typeof leg.price === 'number'
+    ){
+
+      g('priceInput').value =
+        leg.price.toFixed(2);
+
+      g('priceInput').placeholder =
+        '';
+
+    }else{
+
+      g('priceInput').value =
+        '';
+
+      g('priceInput').placeholder =
+        'not in data file';
+
+    }
+
+  }
+
+
+  root.querySelectorAll(
+    `input[name="inst_${ns}"]`
+  ).forEach(r => {
+
+    r.addEventListener(
+      'change',
+      () => {
+
+        state.inst =
+          r.value;
+
+        refreshExpirySel();
+
+      }
+    );
+
+  });
+
+
+  root.querySelectorAll(
+    `input[name="ot_${ns}"]`
+  ).forEach(r => {
+
+    r.addEventListener(
+      'change',
+      () => {
+
+        state.optType =
+          r.value;
+
+        refreshPrice();
+
+      }
+    );
+
+  });
+
+
+  root.querySelectorAll(
+    `input[name="side_${ns}"]`
+  ).forEach(r => {
+
+    r.addEventListener(
+      'change',
+      () => {
+
+        state.side =
+          r.value;
+
+      }
+    );
+
+  });
+
+
+  g('symbolSel')
+    .addEventListener(
+      'change',
+      refreshExpirySel
+    );
+
+
+  g('expirySel')
+    .addEventListener(
+      'change',
+      () => {
+
+        refreshStrikeSel();
+
+        refreshLotHint();
+
+        refreshPrice();
+
+      }
+    );
+
+
+  g('lotsInput')
+    .addEventListener(
+      'input',
+      updateQtyHint
+    );
+
+
+  g('lotMinus')
+    .addEventListener(
+      'click',
+      () => {
+
+        g('lotsInput').value =
+          Math.max(
+            1,
+            parseInt(
+              g('lotsInput').value || '1',
+              10
+            ) - 1
+          );
+
+        updateQtyHint();
+
+      }
+    );
+
+
+  g('lotPlus')
+    .addEventListener(
+      'click',
+      () => {
+
+        g('lotsInput').value =
+          parseInt(
+            g('lotsInput').value || '1',
+            10
+          ) + 1;
+
+        updateQtyHint();
+
+      }
+    );
+
+
+  g('strikeSel')
+    .addEventListener(
+      'change',
+      refreshPrice
+    );
+
+
+  /* ==========================================================
+     ADD POSITION
+  ========================================================== */
+
+  g('addBtn')
+    .addEventListener(
+      'click',
+      async () => {
+
+        const d =
+          currentSymbolData();
+
+
+        const sym =
+          g('symbolSel').value;
+
+
+        if(!d){
+
+          setStatus(
+            'Please select a symbol.',
+            true
+          );
+
+          return;
+
+        }
+
+
+        const lots =
+          parseInt(
+            g('lotsInput').value || '1',
+            10
+          );
+
+
+        const qty =
+          lots * d.lot;
+
+
+        const price =
+          parseFloat(
+            g('priceInput').value || '0'
+          );
+
+
+        if(!price || price < 0){
+
+          setStatus(
+            'Please enter a valid price.',
+            true
+          );
+
+          return;
+
+        }
+
+
+        const exp =
+          g('expirySel').value;
+
+
+        let token;
+        let label;
+        let strike = null;
+        let optType = null;
+        let product = '';
+
+
+        if(state.inst === 'FUT'){
+
+          const leg =
+            d.fut[exp];
+
+
+          if(!leg){
+
+            setStatus(
+              'That expiry is not available.',
+              true
+            );
+
+            return;
+
+          }
+
+
+          token =
+            leg.id;
+
+
+          product =
+            leg.product ||
+            (
+              kindValue === 'IDX'
+              ? 'FUTIDX'
+              : kindValue === 'STK'
+              ? 'FUTSTK'
+              : 'FUTCOM'
+            );
+
+
+          label =
+            `${sym} FUT ${fmtExpiry(exp)}`;
+
+        }else{
+
+          strike =
+            g('strikeSel').value;
+
+
+          optType =
+            state.optType;
+
+
+          const pair =
+            d.opt[exp] &&
+            d.opt[exp][strike];
+
+
+          if(!pair){
+
+            setStatus(
+              'Strike/expiry combination not available.',
+              true
+            );
+
+            return;
+
+          }
+
+
+          const leg =
+            state.optType === 'CE'
+            ? pair.ce
+            : pair.pe;
+
+
+          if(!leg){
+
+            setStatus(
+              'No contract found.',
+              true
+            );
+
+            return;
+
+          }
+
+
+          token =
+            leg.id;
+
+
+          product =
+            leg.product ||
+            (
+              kindValue === 'IDX'
+              ? 'OPTIDX'
+              : kindValue === 'STK'
+              ? 'OPTSTK'
+              : 'OPTCOM'
+            );
+
+
+          label =
+            `${sym} ${strike} ${state.optType} ${fmtExpiry(exp)}`;
+
+        }
+
+
+        legs.push({
+
+          token,
+
+          label,
+
+          side:state.side,
+
+          qty,
+
+          price,
+
+          exchange:
+            d.exchange,
+
+          symbol:sym,
+
+          instType:
+            state.inst,
+
+          optType,
+
+          expiry:exp,
+
+          strike,
+
+          product,
+
+          position:
+            state.side === 'B'
+            ? qty
+            : -qty,
+
+          standaloneSpan:0,
+
+          standaloneExposure:0,
+
+          standalonePremium:0,
+
+          standaloneMargin:0,
+
+          hedgeBenefit:0,
+
+          marginLoading:false
+
+        });
+
+
+        renderPortfolio();
+
+
+        setStatus(
+          'Position added. Calculating margin…',
+          null
+        );
+
+
+        /*
+          Automatically calculate after adding.
+        */
+
+        await calculateMargin();
+
+      }
+    );
+
+
+  return {
+    refreshSymbolSel
+  };
+
+}
+
+
+/* ============================================================
+   PORTFOLIO RENDER
+============================================================ */
+
+function renderPortfolio(){
+
+  const body =
+    $('portfolioBody');
+
+
+  if(legs.length === 0){
+
+    body.innerHTML = `
+
+      <tr class="empty-row">
+
+        <td colspan="13">
+
+          No legs added yet — build a position above.
+
+        </td>
+
+      </tr>
+
+    `;
+
+
+    setDisabled('calcBtn', true);
+
+
+    return;
+
+  }
+
+
+  setDisabled('calcBtn', false);
+
+
+  body.innerHTML =
+    legs.map(
+      (l,i) => `
+
+      <tr>
+
+        <!-- SYMBOL -->
+
+        <td class="symbol-cell">
+          ${l.symbol || l.label}
+        </td>
+
+
+        <!-- EXPIRY -->
+
+        <td class="expiry-cell">
+          ${l.expiry ? fmtExpiry(l.expiry) : '-'}
+        </td>
+
+
+        <!-- STRIKE -->
+
+        <td class="strike-cell">
+          ${
+            l.strike !== null &&
+            l.strike !== undefined &&
+            l.strike !== ''
+            ? String(l.strike)
+            : '-'
+          }
+        </td>
+
+
+        <!-- OPTION TYPE -->
+
+        <td class="opt-cell">
+          ${l.optType || '-'}
+        </td>
+
+
+        <!-- PRODUCT -->
+
+        <td class="product-cell">
+          ${l.product || '-'}
+        </td>
+
+
+        <!-- QTY -->
+
+        <td class="qty-cell">
+          ${String(l.qty)}
+        </td>
+
+
+        <!-- PRICE -->
+
+        <td class="price-cell">
+          ${formatNumber(l.price)}
+        </td>
+
+
+        <!-- BUY / SELL -->
+
+        <td>
+
+          <span
+            class="side-tag ${l.side}"
+          >
+
+            ${
+              l.side === 'B'
+              ? 'BUY'
+              : 'SELL'
+            }
+
+          </span>
+
+        </td>
+
+
+        <!-- SPAN -->
+
+        <td class="number-cell">
+
+          ${
+            l.marginLoading
+            ? 'Calculating...'
+            : formatNumber(
+                l.standaloneSpan
+              )
+          }
+
+        </td>
+
+
+        <!-- EXPOSURE -->
+
+        <td class="number-cell">
+
+          ${
+            l.marginLoading
+            ? 'Calculating...'
+            : formatNumber(
+                l.standaloneExposure
+              )
+          }
+
+        </td>
+
+
+        <!-- PREMIUM -->
+
+        <td class="number-cell">
+
+          ${
+            l.marginLoading
+            ? 'Calculating...'
+            : formatNumber(
+                l.standalonePremium
+              )
+          }
+
+        </td>
+
+
+        <!-- TOTAL -->
+
+        <td class="number-cell">
+
+          ${
+            l.marginLoading
+            ? 'Calculating...'
+            : formatNumber(
+                l.standaloneMargin
+              )
+          }
+
+        </td>
+
+
+        <!-- REMOVE -->
+
+        <td>
+
+          <button
+            class="rm"
+            data-i="${i}"
+            title="Remove"
+          >
+            ✕
+          </button>
+
+        </td>
+
+      </tr>
+
+    `
+    ).join('');
+
+}
+
+
+/* ============================================================
+   REMOVE LEG
+============================================================ */
+
+$('portfolioBody')
+  .addEventListener(
+    'click',
+    async e => {
+
+      const btn =
+        e.target.closest('.rm');
+
+
+      if(!btn)
+        return;
+
+
+      const index =
+        parseInt(
+          btn.dataset.i,
+          10
+        );
+
+
+      legs.splice(
+        index,
+        1
+      );
+
+
+      renderPortfolio();
+
+
+      if(legs.length === 0){
+
+        resetResults();
+
+        setStatus(
+          '',
+          null
+        );
+
+        return;
+
+      }
+
+
+      setStatus(
+        'Recalculating margin…',
+        null
+      );
+
+
+      await calculateMargin();
+
+    }
+  );
+
+
+/* ============================================================
+   RESET
+============================================================ */
+
+$('resetBtn')
+  .addEventListener(
+    'click',
+    () => {
+
+      legs = [];
+
+      renderPortfolio();
+
+      resetResults();
+
+      setStatus(
+        '',
+        null
+      );
+
+    }
+  );
+
+
+/* ============================================================
+   STATUS
+============================================================ */
+
+function setStatus(
+  msg,
+  isErr
+){
+
+  const el =
+    $('statusLine');
+
+
+  el.textContent =
+    msg;
+
+
+  el.className =
+    'status-line' +
+    (
+      isErr === true
+      ? ' err'
+      : isErr === false
+      ? ' ok'
+      : ''
+    );
+
+}
+
+
+/* ============================================================
+   RESET RESULTS
+============================================================ */
+
+function resetResults(){
+
+  [
+    'statBenefit',
+    'statSpan',
+    'statExposure',
+    'statPremium',
+    'statTotal',
+    'hedgeBenefit',
+    'hedgeSpan',
+    'hedgeExposure',
+    'hedgePremium',
+    'hedgeTotal'
+  ].forEach(
+    id => {
+
+      setText(id, '₹0');
+
+    }
+  );
+
+
+  legs.forEach(l => {
+
+    l.standaloneSpan = 0;
+
+    l.standaloneExposure = 0;
+
+    l.standalonePremium = 0;
+
+    l.standaloneMargin = 0;
+
+    l.hedgeBenefit = 0;
+
+    l.marginLoading = false;
+
+  });
+
+
+  renderPortfolio();
+
+}
+
+
+/* ============================================================
+   MARGIN ENGINE
+============================================================ */
+
+async function callMarginEngine(
+  portfolioLegs
+){
+
+  const body = {
+
+    Portfolio:
+
+      portfolioLegs.map(
+        l => ({
+
+          Exchange:
+            l.exchange || 'NSEFO',
+
+          ExchangeInstrumentID:
+            l.token,
+
+          Position:
+            l.position,
+
+          Price:
+            String(l.price)
+
+        })
+      )
+
+  };
+
+
+  const res =
+    await fetch(
+      'https://secure.aetramtrades.in/apimarketdata/instruments/calculator/position',
+      {
+
+        method:'POST',
+
+        headers:{
+          'Content-Type':
+            'application/json'
+        },
+
+        body:
+          JSON.stringify(body)
+
+      }
+    );
+
+
+  const data =
+    await res.json();
+
+
+  if(
+    data.type !== 'success'
+  ){
+
+    throw new Error(
+      data.description ||
+      'Margin engine returned an error.'
+    );
+
+  }
+
+
+  return data.result;
+
+}
+
+
+/* ============================================================
+   RESULT TOTAL
+============================================================ */
+
+function resultTotal(r){
+
+  return Number(
+    r.TotalMargin ||
+    (
+      Number(r.SpanMargin || 0) +
+      Number(r.ExposureMargin || 0) +
+      Number(r.AdditionalMargin || 0) +
+      Number(r.NetOptionsPremium || 0)
+    )
+  );
+
+}
+
+
+/* ============================================================
+   MAIN CALCULATION
+============================================================ */
+
+async function calculateMargin(){
+
+  if(!legs.length){
+
+    resetResults();
+
+    return;
+
+  }
+
+
+  setDisabled('calcBtn', true);
+
+
+  setText('calcBtn', 'Calculating…');
+
+
+  setStatus(
+    'Calculating individual margins…',
+    null
+  );
+
+
+  try{
+
+    /* --------------------------------------------------------
+       1. COMBINED PORTFOLIO
+    -------------------------------------------------------- */
+
+    const combined =
+      await callMarginEngine(
+        legs
+      );
+
+
+    const span =
+      Number(
+        combined.SpanMargin || 0
+      );
+
+
+    const exposure =
+      Number(
+        combined.ExposureMargin || 0
+      );
+
+
+    const additional =
+      Number(
+        combined.AdditionalMargin || 0
+      );
+
+
+    const premium =
+      Number(
+        combined.NetOptionsPremium || 0
+      );
+
+
+    const total =
+      resultTotal(
+        combined
+      );
+
+
+    /* --------------------------------------------------------
+       2. INDIVIDUAL SCRIPT MARGINS
+    -------------------------------------------------------- */
+
+    let standaloneSum = 0;
+
+
+    for(let i=0;i<legs.length;i++){
+
+      const leg =
+        legs[i];
+
+
+      leg.marginLoading =
+        true;
+
+
+      renderPortfolio();
+
+
+      try{
+
+        const individual =
+          await callMarginEngine(
+            [leg]
+          );
+
+
+        const individualSpan =
+          Number(
+            individual.SpanMargin || 0
+          );
+
+
+        const individualExposure =
+          Number(
+            individual.ExposureMargin || 0
+          );
+
+
+        const individualAdditional =
+          Number(
+            individual.AdditionalMargin || 0
+          );
+
+
+        const individualPremium =
+          Number(
+            individual.NetOptionsPremium || 0
+          );
+
+
+        const individualTotal =
+          resultTotal(
+            individual
+          );
+
+
+        /*
+          Save individual breakup
+        */
+
+        leg.standaloneSpan =
+          individualSpan;
+
+
+        leg.standaloneExposure =
+          individualExposure;
+
+
+        leg.standalonePremium =
+          individualPremium;
+
+
+        leg.standaloneAdditional =
+          individualAdditional;
+
+
+        leg.standaloneMargin =
+          individualTotal;
+
+
+        standaloneSum +=
+          individualTotal;
+
+
+      }catch(err){
+
+        leg.standaloneSpan = 0;
+
+        leg.standaloneExposure = 0;
+
+        leg.standalonePremium = 0;
+
+        leg.standaloneAdditional = 0;
+
+        leg.standaloneMargin = 0;
+
+      }
+
+
+      leg.marginLoading =
+        false;
+
+
+      renderPortfolio();
+
+    }
+
+
+    /* --------------------------------------------------------
+       3. HEDGE BENEFIT
+    -------------------------------------------------------- */
+
+    let benefit =
+      Math.max(
+        0,
+        standaloneSum - total
+      );
+
+
+    /* --------------------------------------------------------
+       4. SUMMARY
+    -------------------------------------------------------- */
+
+    setText('statBenefit',
+      fmtINR(benefit));
+
+
+    setText('statSpan',
+      fmtINR(span));
+
+
+    setText('statExposure',
+      fmtINR(exposure));
+
+
+    setText('statPremium',
+      fmtINR(premium));
+
+
+    setText('statTotal',
+      fmtINR(total));
+
+
+    /* Hedge box */
+
+    setText('hedgeBenefit',
+      fmtINR(benefit));
+
+
+    setText('hedgeSpan',
+      fmtINR(span));
+
+
+    setText('hedgeExposure',
+      fmtINR(exposure));
+
+
+    setText('hedgePremium',
+      fmtINR(premium));
+
+
+    setText('hedgeTotal',
+      fmtINR(total));
+
+
+    /* --------------------------------------------------------
+       5. DISPLAY HEDGE BENEFIT
+    -------------------------------------------------------- */
+
+    legs.forEach(
+      l => l.hedgeBenefit = 0
+    );
+
+
+    if(
+      benefit > 0 &&
+      legs.length > 1
+    ){
+
+      legs[0].hedgeBenefit =
+        benefit;
+
+    }
+
+
+    renderPortfolio();
+
+
+    if(benefit > 0){
+
+      setStatus(
+        'Margin calculated automatically. Hedge benefit applied.',
+        false
+      );
+
+    }else{
+
+      setStatus(
+        'Margin calculated automatically. No margin benefit available for this combination.',
+        false
+      );
+
+    }
+
+
+  }catch(err){
+
+    const msg = err && err.message ? err.message : String(err);
+    const networkLike =
+      /failed to fetch|networkerror|cors|load failed/i.test(msg);
+
+    setStatus(
+      networkLike
+        ? 'Request failed: ' + msg +
+          ' — the margin endpoint may be blocked by CORS or may require an allowed origin.'
+        : 'Calculation failed: ' + msg,
+      true
+    );
+
+  }finally{
+
+    setDisabled('calcBtn', legs.length === 0);
+
+
+    setText('calcBtn', 'Calculate margin');
+
+  }
+
+}
+
+
+/* ============================================================
+   MANUAL CALCULATE BUTTON
+============================================================ */
+
+$('calcBtn')
+  .addEventListener(
+    'click',
+    calculateMargin
+  );
+
+
+/* ============================================================
+   NUMBER FORMAT
+   IMPORTANT:
+   NO COMMA
+============================================================ */
+
+function formatNumber(n){
+
+  const num =
+    Number(n || 0);
+
+
+  if(!Number.isFinite(num))
+    return '0';
+
+
+  return num.toFixed(2);
+
+}
+
+
+/* ============================================================
+   INR FORMAT FOR SUMMARY
+============================================================ */
+
+function fmtINR(n){
+
+  return '₹' +
+    formatNumber(n);
+
+}
+
+
+/* ============================================================
+   INIT
+============================================================ */
+
+async function init(){
+
+  const stkPanel =
+    buildPanel(
+      'builder_STK',
+      'STK',
+      'Stock'
+    );
+
+
+  const idxPanel =
+    buildPanel(
+      'builder_IDX',
+      'IDX',
+      'Index'
+    );
+
+
+  const comPanel =
+    buildPanel(
+      'builder_COM',
+      'COM',
+      'Commodity'
+    );
+
+
+  const problems =
+    await loadAllData();
+
+
+  const symCount =
+    Object.keys(
+      INSTR_DATA
+    ).length;
+
+
+  if(problems.length){
+
+    setText('dataStamp',
+      `${symCount} symbols loaded. ` +
+      problems.join(' · '));
+
+  }else{
+
+    setText('dataStamp',
+      `contract master + MCX bhavcopy — ${symCount} symbols loaded`);
+
+  }
+
+
+  stkPanel.refreshSymbolSel();
+
+  idxPanel.refreshSymbolSel();
+
+  comPanel.refreshSymbolSel();
+
+}
+
+
+init();
+
+</script>
+
+</body>
+</html>
